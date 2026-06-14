@@ -4,10 +4,13 @@ import { useParams } from "react-router-dom";
 import api from "../services/api";
 import Navbar from "../components/Navbar";
 
+import VideoMeeting from "../components/VideoMeeting";
+
 function MeetingDetails() {
     const { id } = useParams();
 
     const [meeting, setMeeting] = useState(null);
+    const [showMeeting, setShowMeeting] = useState(false);
 
     const user = JSON.parse(localStorage.getItem("user"));
 
@@ -98,6 +101,12 @@ const isParticipant =
 
 <p>{meeting.description}</p>
 
+<button
+    onClick={() => setShowMeeting(true)}
+>
+    Join Video Meeting
+</button>
+
 {isParticipant ? (
     <button onClick={leaveMeeting}>
         Leave Meeting
@@ -137,6 +146,12 @@ const isParticipant =
                     )
                 )}
             </ul>
+
+            {showMeeting && (
+    <VideoMeeting
+        roomName={`intellmeet-${meeting._id}`}
+    />
+)}
         </div>
     );
 }
