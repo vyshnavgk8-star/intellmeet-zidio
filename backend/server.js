@@ -15,6 +15,11 @@ app.use(express.json());
 
 app.use("/api/auth", require("./routes/authRoutes"));
 
+app.use(
+    "/api/meetings",
+    require("./routes/meetingRoutes")
+);
+
 app.get("/", (req, res) => {
     res.send("IntellMeet Backend Running");
 });
