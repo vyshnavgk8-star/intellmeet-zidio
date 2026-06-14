@@ -54,3 +54,74 @@ exports.getMeetingById = async (req, res) => {
         });
     }
 };
+
+exports.joinMeeting = async (req, res) => {
+    try {
+        const meeting = await Meeting.findById(req.params.id);
+
+        if (!meeting) {
+            return res.status(404).json({
+                message: "Meeting not found",
+            });
+        }
+
+        const alreadyJoined = meeting.participants.some(
+            (participant) =>
+                participant.toString() === req.user.id
+        );
+
+        if (alreadyJoined) {
+            return res.status(400).json({
+                message: "You have already joined this meeting",
+            });
+        }
+
+        meeting.participants.push(req.user.id);
+
+        await meeting.save();
+
+        res.json({
+            message: "Joined meeting successfully",
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: error.message,
+        });
+    }
+};
+
+exports.leaveMeeting = async (req, res) => {
+    try {
+        const meeting = await Meeting.findById(req.params.id);
+
+        if (!meeting) {
+            return res.status(404).json({
+                message: "Meeting not found",
+            });
+        }
+
+        if (
+    meeting.createdBy.toString() === req.user.id
+) {
+    return res.status(400).json({
+        message:
+            "Meeting creator cannot leave the meeting",
+    });
+}
+
+        meeting.participants = meeting.participants.filter(
+            (participant) =>
+                participant.toString() !== req.user.id
+        );
+
+        await meeting.save();
+
+        res.json({
+            message: "Left meeting successfully",
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: error.message,
+        });
+    }
+};

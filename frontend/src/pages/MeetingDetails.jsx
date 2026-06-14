@@ -9,6 +9,8 @@ function MeetingDetails() {
 
     const [meeting, setMeeting] = useState(null);
 
+    const user = JSON.parse(localStorage.getItem("user"));
+
     useEffect(() => {
         fetchMeeting();
     }, []);
@@ -34,6 +36,56 @@ function MeetingDetails() {
         }
     };
 
+    const joinMeeting = async () => {
+    try {
+        const token = localStorage.getItem("token");
+
+        await api.post(
+            `/meetings/${id}/join`,
+            {},
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+
+        fetchMeeting();
+
+        alert("Joined meeting");
+    } catch (error) {
+        alert(error.response?.data?.message);
+    }
+};
+
+const leaveMeeting = async () => {
+    try {
+        const token = localStorage.getItem("token");
+
+        await api.post(
+            `/meetings/${id}/leave`,
+            {},
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+
+        fetchMeeting();
+
+        alert("Left meeting");
+    } catch (error) {
+        alert(error.response?.data?.message);
+    }
+};
+
+const isParticipant =
+    meeting?.participants?.some(
+        (participant) =>
+            participant._id === user.id
+    );
+
     if (!meeting) {
         return <p>Loading...</p>;
     }
@@ -44,9 +96,17 @@ function MeetingDetails() {
 
             <h2>{meeting.title}</h2>
 
-            <p>
-                {meeting.description}
-            </p>
+<p>{meeting.description}</p>
+
+{isParticipant ? (
+    <button onClick={leaveMeeting}>
+        Leave Meeting
+    </button>
+) : (
+    <button onClick={joinMeeting}>
+        Join Meeting
+    </button>
+)}
 
             <h3>Created By</h3>
 
@@ -57,6 +117,10 @@ function MeetingDetails() {
             </p>
 
             <h3>Participants</h3>
+
+<p>
+    Total Participants: {meeting.participants.length}
+</p>
 
             <ul>
                 {meeting.participants.map(
