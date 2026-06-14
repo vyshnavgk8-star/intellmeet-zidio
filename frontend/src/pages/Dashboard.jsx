@@ -4,6 +4,9 @@ import api from "../services/api";
 function Dashboard() {
     const [meetings, setMeetings] = useState([]);
 
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
+
     const user = JSON.parse(
         localStorage.getItem("user")
     );
@@ -33,6 +36,37 @@ function Dashboard() {
         }
     };
 
+    const createMeeting = async (e) => {
+    e.preventDefault();
+
+    try {
+        const token = localStorage.getItem("token");
+
+        await api.post(
+            "/meetings",
+            {
+                title,
+                description,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+
+        setTitle("");
+        setDescription("");
+
+        fetchMeetings();
+    } catch (error) {
+        alert(
+            error.response?.data?.message ||
+            "Failed to create meeting"
+        );
+    }
+};
+
     const logout = () => {
         localStorage.clear();
 
@@ -49,17 +83,53 @@ function Dashboard() {
                 Logout
             </button>
 
+            <h3>Create Meeting</h3>
+
+<form onSubmit={createMeeting}>
+    <input
+        type="text"
+        placeholder="Meeting Title"
+        value={title}
+        onChange={(e) =>
+            setTitle(e.target.value)
+        }
+        required
+    />
+
+    <br /><br />
+
+    <textarea
+        placeholder="Description"
+        value={description}
+        onChange={(e) =>
+            setDescription(e.target.value)
+        }
+    />
+
+    <br /><br />
+
+    <button type="submit">
+        Create Meeting
+    </button>
+</form>
+
+<hr />
+
             <h3>Your Meetings</h3>
 
-            {meetings.map((meeting) => (
-                <div key={meeting._id}>
-                    <h4>{meeting.title}</h4>
+            {meetings.length === 0 ? (
+    <p>No meetings found.</p>
+) : (
+    meetings.map((meeting) => (
+        <div key={meeting._id}>
+            <h4>{meeting.title}</h4>
 
-                    <p>
-                        {meeting.description}
-                    </p>
-                </div>
-            ))}
+            <p>{meeting.description}</p>
+
+            <hr />
+        </div>
+    ))
+)}
         </div>
     );
 }
