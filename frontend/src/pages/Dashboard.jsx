@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../services/api";
+import Navbar from "../components/Navbar";
+import { Link } from "react-router-dom";
 
 function Dashboard() {
     const [meetings, setMeetings] = useState([]);
@@ -75,13 +77,10 @@ function Dashboard() {
 
     return (
         <div>
+            <Navbar />
             <h2>
                 Welcome, {user?.name}
             </h2>
-
-            <button onClick={logout}>
-                Logout
-            </button>
 
             <h3>Create Meeting</h3>
 
@@ -122,7 +121,9 @@ function Dashboard() {
 ) : (
     meetings.map((meeting) => (
         <div key={meeting._id}>
-            <h4>{meeting.title}</h4>
+            <Link to={`/meetings/${meeting._id}`}>
+    <h4>{meeting.title}</h4>
+</Link>
 
             <p>{meeting.description}</p>
 
