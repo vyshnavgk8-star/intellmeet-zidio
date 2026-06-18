@@ -76,7 +76,7 @@ function Dashboard() {
     };
 
     return (
-        <div>
+        <div className="container mt-4">
             <Navbar />
             <h2>
                 Welcome, {user?.name}
@@ -84,6 +84,8 @@ function Dashboard() {
 
             <h3>Create Meeting</h3>
 
+<div className="card mb-4">
+  <div className="card-body">
 <form onSubmit={createMeeting}>
     <input
         type="text"
@@ -111,6 +113,8 @@ function Dashboard() {
         Create Meeting
     </button>
 </form>
+</div>
+</div>
 
 <hr />
 
@@ -120,7 +124,8 @@ function Dashboard() {
     <p>No meetings found.</p>
 ) : (
     meetings.map((meeting) => (
-        <div key={meeting._id}>
+        <div key={meeting._id} className="card mb-3">
+            <div className="card-body">
             <Link to={`/meetings/${meeting._id}`}>
     <h4>{meeting.title}</h4>
 </Link>
@@ -128,6 +133,7 @@ function Dashboard() {
             <p>{meeting.description}</p>
 
             <hr />
+            </div>
         </div>
     ))
 )}
