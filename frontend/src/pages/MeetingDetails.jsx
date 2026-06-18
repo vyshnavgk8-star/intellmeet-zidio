@@ -11,11 +11,14 @@ function MeetingDetails() {
 
     const [meeting, setMeeting] = useState(null);
     const [showMeeting, setShowMeeting] = useState(false);
+    const [messages, setMessages] = useState([]);
+const [newMessage, setNewMessage] = useState("");
 
     const user = JSON.parse(localStorage.getItem("user"));
 
     useEffect(() => {
         fetchMeeting();
+        fetchMessages();
     }, []);
 
     const fetchMeeting = async () => {
@@ -38,6 +41,51 @@ function MeetingDetails() {
             console.error(error);
         }
     };
+
+    const fetchMessages = async () => {
+    try {
+        const token = localStorage.getItem("token");
+
+        const response = await api.get(
+            `/chat/${id}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+
+        setMessages(response.data);
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+const sendMessage = async (e) => {
+    e.preventDefault();
+
+    try {
+        const token = localStorage.getItem("token");
+
+        await api.post(
+            `/chat/${id}`,
+            {
+                message: newMessage,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+
+        setNewMessage("");
+
+        fetchMessages();
+    } catch (error) {
+        console.error(error);
+    }
+};
 
     const joinMeeting = async () => {
     try {
@@ -146,6 +194,36 @@ const isParticipant =
                     )
                 )}
             </ul>
+
+            <h3>Meeting Chat</h3>
+
+<form onSubmit={sendMessage}>
+    <input
+        type="text"
+        placeholder="Type a message..."
+        value={newMessage}
+        onChange={(e) =>
+            setNewMessage(e.target.value)
+        }
+        required
+    />
+
+    <button type="submit">
+        Send
+    </button>
+</form>
+
+<ul>
+    {messages.map((msg) => (
+        <li key={msg._id}>
+            <strong>
+                {msg.sender.name}:
+            </strong>
+            {" "}
+            {msg.message}
+        </li>
+    ))}
+</ul>
 
             {showMeeting && (
     <VideoMeeting

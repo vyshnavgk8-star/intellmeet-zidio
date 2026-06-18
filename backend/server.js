@@ -20,6 +20,11 @@ app.use(
     require("./routes/meetingRoutes")
 );
 
+app.use(
+    "/api/chat",
+    require("./routes/chatRoutes")
+);
+
 app.get("/", (req, res) => {
     res.send("IntellMeet Backend Running");
 });
