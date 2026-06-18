@@ -10,7 +10,15 @@ exports.sendMessage = async (req, res) => {
             message,
         });
 
-        res.status(201).json(chat);
+        const populatedChat =
+    await chat.populate(
+        "sender",
+        "name email"
+    );
+
+res.status(201).json(
+    populatedChat
+);
     } catch (error) {
         res.status(500).json({
             message: error.message,

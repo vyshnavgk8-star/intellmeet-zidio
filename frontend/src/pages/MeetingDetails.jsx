@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import api from "../services/api";
+import socket from "../services/socket";
 import Navbar from "../components/Navbar";
 
 import VideoMeeting from "../components/VideoMeeting";
@@ -18,13 +19,38 @@ function MeetingDetails() {
     const [showMeeting, setShowMeeting] = useState(false);
     const [messages, setMessages] = useState([]);
 const [newMessage, setNewMessage] = useState("");
+const [typing, setTyping] = useState(false);
 
     const user = JSON.parse(localStorage.getItem("user"));
 
-    useEffect(() => {
-        fetchMeeting();
-        fetchMessages();
-    }, []);
+useEffect(() => {
+    fetchMeeting();
+    fetchMessages();
+
+    socket.emit("joinRoom", id);
+
+    socket.on("newMessage", (message) => {
+        setMessages((prev) => [
+            ...prev,
+            message,
+        ]);
+    });
+
+    socket.on("userTyping", () => {
+        setTyping(true);
+
+        setTimeout(() => {
+            setTyping(false);
+        }, 1000);
+    });
+
+    return () => {
+        socket.emit("leaveRoom", id);
+
+        socket.off("newMessage");
+        socket.off("userTyping");
+    };
+}, [id]);
 
     const fetchMeeting = async () => {
         try {
@@ -70,23 +96,34 @@ const sendMessage = async (e) => {
     e.preventDefault();
 
     try {
-        const token = localStorage.getItem("token");
+        const token =
+            localStorage.getItem("token");
 
-        await api.post(
-            `/chat/${id}`,
-            {
-                message: newMessage,
-            },
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
+        const response =
+            await api.post(
+                `/chat/${id}`,
+                {
+                    message:
+                        newMessage,
                 },
+                {
+                    headers: {
+                        Authorization:
+                            `Bearer ${token}`,
+                    },
+                }
+            );
+
+        socket.emit(
+            "sendMessage",
+            {
+                roomId: id,
+                message:
+                    response.data,
             }
         );
 
         setNewMessage("");
-
-        fetchMessages();
     } catch (error) {
         console.error(error);
     }
@@ -254,11 +291,18 @@ const isParticipant =
           className="form-control"
           placeholder="Type a message..."
           value={newMessage}
-          onChange={(e) =>
-            setNewMessage(
-              e.target.value
-            )
-          }
+onChange={(e) => {
+
+    setNewMessage(
+        e.target.value
+    );
+
+    socket.emit(
+        "typing",
+        id
+    );
+
+}}
           required
         />
 
@@ -271,6 +315,11 @@ const isParticipant =
 
       </div>
     </form>
+    {typing && (
+    <p>
+        Someone is typing...
+    </p>
+)}
 
   </div>
 </div>

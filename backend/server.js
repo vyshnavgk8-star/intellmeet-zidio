@@ -40,6 +40,63 @@ app.get("/api/profile", authMiddleware, (req, res) => {
     });
 });
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+const http = require("http");
+const { Server } = require("socket.io");
+
+const server = http.createServer(app);
+
+const io = new Server(server, {
+    cors: {
+        origin: "*",
+    },
+});
+
+io.on("connection", (socket) => {
+
+    socket.on(
+        "joinRoom",
+        (meetingId) => {
+            socket.join(meetingId);
+        }
+    );
+
+    socket.on(
+        "leaveRoom",
+        (meetingId) => {
+            socket.leave(meetingId);
+        }
+    );
+
+    socket.on(
+    "sendMessage",
+    (data) => {
+
+        io.to(
+            data.roomId
+        ).emit(
+            "newMessage",
+            data.message
+        );
+
+    }
+);
+
+socket.on(
+    "typing",
+    (roomId) => {
+
+        socket
+            .to(roomId)
+            .emit(
+                "userTyping"
+            );
+
+    }
+);
+});
+
+server.listen(PORT, () => {
+    console.log(
+        `Server running on port ${PORT}`
+    );
 });
