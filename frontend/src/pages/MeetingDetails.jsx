@@ -5,6 +5,11 @@ import api from "../services/api";
 import Navbar from "../components/Navbar";
 
 import VideoMeeting from "../components/VideoMeeting";
+import {
+  FaVideo,
+  FaUsers,
+  FaComments
+} from "react-icons/fa";
 
 function MeetingDetails() {
     const { id } = useParams();
@@ -144,15 +149,30 @@ const isParticipant =
     return (
         <div>
             <Navbar />
+            <div className="card shadow-sm mb-4">
+  <div className="card-body">
 
-            <h2>{meeting.title}</h2>
+            <div className="card shadow-sm mb-4">
+  <div className="card-body">
+    <h2>{meeting.title}</h2>
 
-<p>{meeting.description}</p>
+    <p>{meeting.description}</p>
+
+    <span className="badge bg-primary">
+      Participants: {meeting.participants.length}
+    </span>
+  </div>
+</div>
 
 <button
-    onClick={() => setShowMeeting(true)}
+ className="btn btn-success"
+ onClick={() =>
+  setShowMeeting(true)
+ }
 >
-    Join Video Meeting
+  <FaVideo />
+  {" "}
+  Join Video Meeting
 </button>
 
 {isParticipant ? (
@@ -165,71 +185,103 @@ const isParticipant =
     </button>
 )}
 
-            <h3>Created By</h3>
+            <div className="card shadow-sm mb-3">
+  <div className="card-body">
+    <h5>Created By</h5>
 
-            <p>
-                {meeting.createdBy.name}
-                {" - "}
-                {meeting.createdBy.email}
-            </p>
+    <p>
+      {meeting.createdBy.name} -
+      {meeting.createdBy.email}
+    </p>
+  </div>
+</div>
+            <div className="card shadow-sm mb-4">
+  <div className="card-body">
+    <h5><FaUsers />
+{" "} Participants</h5>
 
-            <h3>Participants</h3>
+    <ul className="list-group">
+      {meeting.participants.map(
+        (participant) => (
+          <li
+            key={participant._id}
+            className="list-group-item"
+          >
+            {participant.name}
+            {" - "}
+            {participant.email}
+          </li>
+        )
+      )}
+    </ul>
+  </div>
+</div>
 
-<p>
-    Total Participants: {meeting.participants.length}
-</p>
+<div className="card shadow-sm mb-4">
+  <div className="card-body">
 
-            <ul>
-                {meeting.participants.map(
-                    (participant) => (
-                        <li
-                            key={
-                                participant._id
-                            }
-                        >
-                            {participant.name}
-                            {" - "}
-                            {participant.email}
-                        </li>
-                    )
-                )}
-            </ul>
+    <h5><FaComments />
+{" "}Meeting Chat</h5>
 
-            <h3>Meeting Chat</h3>
+    <div
+      className="border rounded p-3 mb-3"
+      style={{
+        height: "300px",
+        overflowY: "auto"
+      }}
+    >
+      {messages.map((msg) => (
+        <div
+          key={msg._id}
+          className="bg-light rounded p-2 mb-2"
+        >
+          <strong>
+            {msg.sender.name}
+          </strong>
 
-<form onSubmit={sendMessage}>
-    <input
-        type="text"
-        placeholder="Type a message..."
-        value={newMessage}
-        onChange={(e) =>
-            setNewMessage(e.target.value)
-        }
-        required
-    />
+          <br />
 
-    <button type="submit">
-        Send
-    </button>
-</form>
+          {msg.message}
+        </div>
+      ))}
+    </div>
 
-<ul>
-    {messages.map((msg) => (
-        <li key={msg._id}>
-            <strong>
-                {msg.sender.name}:
-            </strong>
-            {" "}
-            {msg.message}
-        </li>
-    ))}
-</ul>
+    <form onSubmit={sendMessage}>
+      <div className="input-group">
+
+        <input
+          type="text"
+          className="form-control"
+          placeholder="Type a message..."
+          value={newMessage}
+          onChange={(e) =>
+            setNewMessage(
+              e.target.value
+            )
+          }
+          required
+        />
+
+        <button
+          className="btn btn-primary"
+          type="submit"
+        >
+          Send
+        </button>
+
+      </div>
+    </form>
+
+  </div>
+</div>
 
             {showMeeting && (
     <VideoMeeting
         roomName={`intellmeet-${meeting._id}`}
     />
 )}
+        </div>
+        </div>
         </div>
     );
 }

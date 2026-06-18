@@ -11,23 +11,24 @@ function Navbar() {
     };
 
     return (
-        <nav>
-            <Link to="/dashboard">
-                Dashboard
-            </Link>
+        <nav className="navbar navbar-dark bg-dark px-4">
+  <span className="navbar-brand">
+    IntellMeet
+  </span>
 
-            {" | "}
+  <div>
+    <span className="text-white me-3">
+      {user?.name}
+    </span>
 
-            <span>
-                {user?.name}
-            </span>
-
-            {" | "}
-
-            <button onClick={logout}>
-                Logout
-            </button>
-        </nav>
+    <button
+      className="btn btn-danger"
+      onClick={logout}
+    >
+      Logout
+    </button>
+  </div>
+</nav>
     );
 }
 

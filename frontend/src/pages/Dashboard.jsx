@@ -76,15 +76,45 @@ function Dashboard() {
     };
 
     return (
-        <div className="container mt-4">
+        <div className="container py-4">
             <Navbar />
-            <h2>
-                Welcome, {user?.name}
-            </h2>
+            <div className="container mt-4">
 
-            <h3>Create Meeting</h3>
+  <div className="row mb-4">
 
-<div className="card mb-4">
+    <div className="col-md-4">
+
+      <div className="card text-center shadow-sm">
+
+        <div className="card-body">
+
+          <h2>
+            {meetings.length}
+          </h2>
+
+          <p>
+            Total Meetings
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+            <div className="card shadow-sm mb-4">
+  <div className="card-body">
+    <h2>Welcome, {user?.name} 👋</h2>
+    <p>Manage your meetings and collaborations.</p>
+  </div>
+</div>
+
+<div className="card shadow mb-4">
+  <div className="card-header">
+    Create New Meeting
+  </div>
+
   <div className="card-body">
 <form onSubmit={createMeeting}>
     <input
@@ -124,9 +154,9 @@ function Dashboard() {
     <p>No meetings found.</p>
 ) : (
     meetings.map((meeting) => (
-        <div key={meeting._id} className="card mb-3">
+        <div key={meeting._id} className="card shadow-sm mb-3">
             <div className="card-body">
-            <Link to={`/meetings/${meeting._id}`}>
+            <Link className="btn btn-primary" to={`/meetings/${meeting._id}`}>
     <h4>{meeting.title}</h4>
 </Link>
 
@@ -137,6 +167,7 @@ function Dashboard() {
         </div>
     ))
 )}
+        </div>
         </div>
     );
 }

@@ -36,11 +36,17 @@ function Register() {
     };
 
     return (
-        <div>
+        <div className="container d-flex justify-content-center align-items-center" style={{ minHeight: "100vh" }}>
+            <div
+  className="card shadow"
+  style={{ width: "400px" }}
+>
+  <div className="card-body">
             <h2>Register</h2>
 
             <form onSubmit={handleSubmit}>
                 <input
+                className="form-control mb-3"
                     type="text"
                     name="name"
                     placeholder="Name"
@@ -49,6 +55,7 @@ function Register() {
                 />
 
                 <input
+                className="form-control mb-3"
                     type="email"
                     name="email"
                     placeholder="Email"
@@ -57,6 +64,7 @@ function Register() {
                 />
 
                 <input
+                className="form-control mb-3"
                     type="password"
                     name="password"
                     placeholder="Password"
@@ -64,7 +72,7 @@ function Register() {
                     required
                 />
 
-                <button type="submit">
+                <button type="submit" className="btn btn-primary w-100">
                     Register
                 </button>
             </form>
@@ -75,6 +83,8 @@ function Register() {
                     Login
                 </Link>
             </p>
+        </div>
+        </div>
         </div>
     );
 }

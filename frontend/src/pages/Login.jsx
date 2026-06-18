@@ -46,11 +46,17 @@ function Login() {
     };
 
     return (
-        <div>
+        <div className="container d-flex justify-content-center align-items-center" style={{ minHeight: "100vh" }}>
+            <div
+  className="card shadow"
+  style={{ width: "400px" }}
+>
+  <div className="card-body">
             <h2>Login</h2>
 
             <form onSubmit={handleSubmit}>
                 <input
+                className="form-control mb-3"
                     type="email"
                     name="email"
                     placeholder="Email"
@@ -59,6 +65,7 @@ function Login() {
                 />
 
                 <input
+                className="form-control mb-3"
                     type="password"
                     name="password"
                     placeholder="Password"
@@ -66,7 +73,7 @@ function Login() {
                     required
                 />
 
-                <button type="submit">
+                <button type="submit" className="btn btn-primary w-100">
                     Login
                 </button>
             </form>
@@ -77,6 +84,8 @@ function Login() {
                     Register
                 </Link>
             </p>
+            </div>
+</div>
         </div>
     );
 }
